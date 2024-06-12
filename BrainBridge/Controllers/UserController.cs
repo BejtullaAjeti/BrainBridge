@@ -1,5 +1,6 @@
-﻿using BrainBridge.Models;
+﻿using BrainBridge.DTOs;
 using BrainBridge.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,14 +19,16 @@ namespace BrainBridge.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetAllUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUserById(int id)
+        [Authorize]
+        public async Task<ActionResult<UserDTO>> GetUserById(int id)
         {
             var user = await _userService.GetUserByIdAsync(id);
             if (user == null)
@@ -36,24 +39,27 @@ namespace BrainBridge.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddUser(User user)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> AddUser(UserDTO userDto)
         {
-            await _userService.AddUserAsync(user);
-            return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+            await _userService.AddUserAsync(userDto);
+            return CreatedAtAction(nameof(GetUserById), new { id = userDto.Id }, userDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateUser(int id, User user)
+        [Authorize(Roles = "Admin, Moderator")]
+        public async Task<ActionResult> UpdateUser(int id, UserDTO userDto)
         {
-            if (id != user.Id)
+            if (id != userDto.Id)
             {
                 return BadRequest();
             }
-            await _userService.UpdateUserAsync(user);
+            await _userService.UpdateUserAsync(userDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUserAsync(id);

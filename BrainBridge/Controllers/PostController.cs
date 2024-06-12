@@ -1,5 +1,6 @@
-﻿using BrainBridge.Models;
+﻿using BrainBridge.DTOs;
 using BrainBridge.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,14 +19,16 @@ namespace BrainBridge.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetAllPosts()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllPosts()
         {
             var posts = await _postService.GetAllPostsAsync();
             return Ok(posts);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Post>> GetPostById(int id)
+        [Authorize]
+        public async Task<ActionResult<PostDTO>> GetPostById(int id)
         {
             var post = await _postService.GetPostByIdAsync(id);
             if (post == null)
@@ -36,24 +39,27 @@ namespace BrainBridge.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddPost(Post post)
+        [Authorize]
+        public async Task<ActionResult> AddPost(PostDTO postDto)
         {
-            await _postService.AddPostAsync(post);
-            return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, post);
+            await _postService.AddPostAsync(postDto);
+            return CreatedAtAction(nameof(GetPostById), new { id = postDto.Id }, postDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdatePost(int id, Post post)
+        [Authorize(Roles = "Admin, Moderator")]
+        public async Task<ActionResult> UpdatePost(int id, PostDTO postDto)
         {
-            if (id != post.Id)
+            if (id != postDto.Id)
             {
                 return BadRequest();
             }
-            await _postService.UpdatePostAsync(post);
+            await _postService.UpdatePostAsync(postDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeletePost(int id)
         {
             await _postService.DeletePostAsync(id);

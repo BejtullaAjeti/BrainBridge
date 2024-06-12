@@ -1,5 +1,6 @@
-﻿using BrainBridge.Models;
+﻿using BrainBridge.DTOs;
 using BrainBridge.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,14 +19,16 @@ namespace BrainBridge.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bridge>>> GetAllBridges()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<BridgeDTO>>> GetAllBridges()
         {
             var bridges = await _bridgeService.GetAllBridgesAsync();
             return Ok(bridges);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bridge>> GetBridgeById(int id)
+        [Authorize]
+        public async Task<ActionResult<BridgeDTO>> GetBridgeById(int id)
         {
             var bridge = await _bridgeService.GetBridgeByIdAsync(id);
             if (bridge == null)
@@ -36,24 +39,27 @@ namespace BrainBridge.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddBridge(Bridge bridge)
+        [Authorize(Roles = "Admin, Moderator")]
+        public async Task<ActionResult> AddBridge(BridgeDTO bridgeDto)
         {
-            await _bridgeService.AddBridgeAsync(bridge);
-            return CreatedAtAction(nameof(GetBridgeById), new { id = bridge.Id }, bridge);
+            await _bridgeService.AddBridgeAsync(bridgeDto);
+            return CreatedAtAction(nameof(GetBridgeById), new { id = bridgeDto.Id }, bridgeDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBridge(int id, Bridge bridge)
+        [Authorize(Roles = "Admin, Moderator")]
+        public async Task<ActionResult> UpdateBridge(int id, BridgeDTO bridgeDto)
         {
-            if (id != bridge.Id)
+            if (id != bridgeDto.Id)
             {
                 return BadRequest();
             }
-            await _bridgeService.UpdateBridgeAsync(bridge);
+            await _bridgeService.UpdateBridgeAsync(bridgeDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteBridge(int id)
         {
             await _bridgeService.DeleteBridgeAsync(id);

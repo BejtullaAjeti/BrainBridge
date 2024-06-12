@@ -1,5 +1,6 @@
-﻿using BrainBridge.Models;
+﻿using BrainBridge.DTOs;
 using BrainBridge.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,14 +19,16 @@ namespace BrainBridge.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetAllComments()
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<CommentDTO>>> GetAllComments()
         {
             var comments = await _commentService.GetAllCommentsAsync();
             return Ok(comments);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetCommentById(int id)
+        [Authorize]
+        public async Task<ActionResult<CommentDTO>> GetCommentById(int id)
         {
             var comment = await _commentService.GetCommentByIdAsync(id);
             if (comment == null)
@@ -36,24 +39,27 @@ namespace BrainBridge.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddComment(Comment comment)
+        [Authorize]
+        public async Task<ActionResult> AddComment(CommentDTO commentDto)
         {
-            await _commentService.AddCommentAsync(comment);
-            return CreatedAtAction(nameof(GetCommentById), new { id = comment.Id }, comment);
+            await _commentService.AddCommentAsync(commentDto);
+            return CreatedAtAction(nameof(GetCommentById), new { id = commentDto.Id }, commentDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateComment(int id, Comment comment)
+        [Authorize(Roles = "Admin, Moderator")]
+        public async Task<ActionResult> UpdateComment(int id, CommentDTO commentDto)
         {
-            if (id != comment.Id)
+            if (id != commentDto.Id)
             {
                 return BadRequest();
             }
-            await _commentService.UpdateCommentAsync(comment);
+            await _commentService.UpdateCommentAsync(commentDto);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteComment(int id)
         {
             await _commentService.DeleteCommentAsync(id);

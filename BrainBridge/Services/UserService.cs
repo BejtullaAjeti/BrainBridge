@@ -1,5 +1,7 @@
-﻿using BrainBridge.Models;
+﻿using AutoMapper;
+using BrainBridge.Models;
 using BrainBridge.Repositories;
+using BrainBridge.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,34 +10,41 @@ namespace BrainBridge.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IUserRepository userRepository)
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync()
         {
-            return await _userRepository.GetAllAsync();
+            var users = await _userRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<UserDTO> GetUserByIdAsync(int id)
         {
-            return await _userRepository.GetByIdAsync(id);
+            var user = await _userRepository.GetByIdAsync(id);
+            return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<User> GetUserByUsernameAsync(string username)
+        public async Task<UserDTO> GetUserByUsernameAsync(string username)
         {
-            return await _userRepository.GetByUsernameAsync(username);
+            var user = await _userRepository.GetByUsernameAsync(username);
+            return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task AddUserAsync(User user)
+        public async Task AddUserAsync(UserDTO userDto)
         {
+            var user = _mapper.Map<User>(userDto);
             await _userRepository.AddAsync(user);
         }
 
-        public async Task UpdateUserAsync(User user)
+        public async Task UpdateUserAsync(UserDTO userDto)
         {
+            var user = _mapper.Map<User>(userDto);
             await _userRepository.UpdateAsync(user);
         }
 

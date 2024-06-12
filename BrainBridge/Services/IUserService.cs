@@ -1,4 +1,4 @@
-﻿using BrainBridge.Models;
+﻿using BrainBridge.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,11 +6,11 @@ namespace BrainBridge.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAllUsersAsync();
-        Task<User> GetUserByIdAsync(int id);
-        Task<User> GetUserByUsernameAsync(string username);
-        Task AddUserAsync(User user);
-        Task UpdateUserAsync(User user);
+        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+        Task<UserDTO> GetUserByIdAsync(int id);
+        Task<UserDTO> GetUserByUsernameAsync(string username);
+        Task AddUserAsync(UserDTO userDto);
+        Task UpdateUserAsync(UserDTO userDto);
         Task DeleteUserAsync(int id);
     }
 }
