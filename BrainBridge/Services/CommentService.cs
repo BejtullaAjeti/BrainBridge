@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using BrainBridge.DTOs;
 using BrainBridge.Models;
 using BrainBridge.Repositories;
-using BrainBridge.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

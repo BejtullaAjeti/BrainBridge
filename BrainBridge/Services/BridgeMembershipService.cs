@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using BrainBridge.DTOs;
 using BrainBridge.Models;
 using BrainBridge.Repositories;
-using BrainBridge.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,26 +20,32 @@ namespace BrainBridge.Services
 
         public async Task<IEnumerable<BridgeMembershipDTO>> GetAllBridgeMembershipsAsync()
         {
-            var bridgeMemberships = await _bridgeMembershipRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<BridgeMembershipDTO>>(bridgeMemberships);
+            var memberships = await _bridgeMembershipRepository.GetAllAsync();
+            return _mapper.Map<IEnumerable<BridgeMembershipDTO>>(memberships);
         }
 
         public async Task<BridgeMembershipDTO> GetBridgeMembershipByIdAsync(int id)
         {
-            var bridgeMembership = await _bridgeMembershipRepository.GetByIdAsync(id);
-            return _mapper.Map<BridgeMembershipDTO>(bridgeMembership);
+            var membership = await _bridgeMembershipRepository.GetByIdAsync(id);
+            return _mapper.Map<BridgeMembershipDTO>(membership);
+        }
+
+        public async Task<BridgeMembershipDTO> GetMembershipByUserAndBridgeAsync(int userId, int bridgeId)
+        {
+            var membership = await _bridgeMembershipRepository.GetMembershipByUserAndBridgeAsync(userId, bridgeId);
+            return _mapper.Map<BridgeMembershipDTO>(membership);
         }
 
         public async Task AddBridgeMembershipAsync(BridgeMembershipDTO bridgeMembershipDto)
         {
-            var bridgeMembership = _mapper.Map<BridgeMembership>(bridgeMembershipDto);
-            await _bridgeMembershipRepository.AddAsync(bridgeMembership);
+            var membership = _mapper.Map<BridgeMembership>(bridgeMembershipDto);
+            await _bridgeMembershipRepository.AddAsync(membership);
         }
 
         public async Task UpdateBridgeMembershipAsync(BridgeMembershipDTO bridgeMembershipDto)
         {
-            var bridgeMembership = _mapper.Map<BridgeMembership>(bridgeMembershipDto);
-            await _bridgeMembershipRepository.UpdateAsync(bridgeMembership);
+            var membership = _mapper.Map<BridgeMembership>(bridgeMembershipDto);
+            await _bridgeMembershipRepository.UpdateAsync(membership);
         }
 
         public async Task DeleteBridgeMembershipAsync(int id)

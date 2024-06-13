@@ -7,6 +7,7 @@
         public int PostId { get; set; }
         public int? ParentCommentId { get; set; } // For comment threading
         public int CreatedById { get; set; }
+        public int BridgeId { get; set; } // Assuming you have this property for authorization
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }

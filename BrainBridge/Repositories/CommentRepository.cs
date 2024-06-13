@@ -3,7 +3,7 @@ using BrainBridge.Models;
 
 namespace BrainBridge.Repositories
 {
-    public class CommentRepository : Repository<Comment>, ICommentRepository
+    public class CommentRepository : GenericRepository<Comment>, ICommentRepository
     {
         public CommentRepository(BrainBridgeDbContext context) : base(context)
         {

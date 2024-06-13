@@ -8,6 +8,7 @@ namespace BrainBridge.Services
     {
         Task<IEnumerable<BridgeMembershipDTO>> GetAllBridgeMembershipsAsync();
         Task<BridgeMembershipDTO> GetBridgeMembershipByIdAsync(int id);
+        Task<BridgeMembershipDTO> GetMembershipByUserAndBridgeAsync(int userId, int bridgeId);
         Task AddBridgeMembershipAsync(BridgeMembershipDTO bridgeMembershipDto);
         Task UpdateBridgeMembershipAsync(BridgeMembershipDTO bridgeMembershipDto);
         Task DeleteBridgeMembershipAsync(int id);

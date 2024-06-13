@@ -1,8 +1,10 @@
 ﻿using BrainBridge.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BrainBridge.Repositories
 {
-    public interface ICommentRepository : IRepository<Comment>
+    public interface ICommentRepository : IGenericRepository<Comment>
     {
     }
 }

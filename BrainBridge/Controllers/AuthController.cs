@@ -25,11 +25,28 @@ namespace BrainBridge.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserDTO userDto)
+        public async Task<IActionResult> Register(RegisterDTO registerDto)
         {
-            // Assuming userDto.Password contains plain text password.
-            // In a real scenario, you should handle password hashing here.
-            await _userService.AddUserAsync(userDto);
+            var existingUser = await _userService.GetUserByUsernameAsync(registerDto.Username);
+            if (existingUser != null)
+            {
+                return BadRequest(new { message = "User already exists" });
+            }
+
+            var user = new UserDTO
+            {
+                Username = registerDto.Username,
+                Email = registerDto.Email,
+                Role = "Regular", // Default role
+                Karma = 0,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            // Hash the password before storing
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+
+            await _userService.AddUserAsync(user);
             return Ok(new { message = "User registered successfully" });
         }
 
@@ -38,13 +55,12 @@ namespace BrainBridge.Controllers
         {
             var user = await _userService.GetUserByUsernameAsync(loginDto.Username);
 
-            if (user == null || user.PasswordHash != loginDto.Password) // In a real scenario, you should handle password verification.
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
             {
-                return Unauthorized(new { message = "Invalid credentials" });
+                return Unauthorized(new { message = "Invalid username or password" });
             }
 
             var token = GenerateJwtToken(user);
-
             return Ok(new { token });
         }
 

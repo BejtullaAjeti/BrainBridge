@@ -5,15 +5,10 @@
         public int Id { get; set; }
         public string Content { get; set; }
         public int PostId { get; set; }
-        public Post Post { get; set; } // Navigation property
-        public int? ParentCommentId { get; set; } // For comment threading
-        public Comment ParentComment { get; set; } // Navigation property
+        public int? ParentCommentId { get; set; }
         public int CreatedById { get; set; }
-        public User CreatedBy { get; set; } // Navigation property
+        public int BridgeId { get; set; } // Assuming you have this property for authorization
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-
-        // Navigation property
-        public ICollection<Comment> Replies { get; set; }
     }
 }
